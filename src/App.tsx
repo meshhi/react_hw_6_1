@@ -1,35 +1,51 @@
-import {useState} from 'react';
+import { useState } from 'react';
+import moment from 'moment';
+import 'moment/dist/locale/ru';
 
 interface IVideo {
-  url: string,
-  date: string
+    url: string,
+    date: string
 }
 
-interface IVideoListProps  {
-  list: Array<IVideo>;
+interface IVideoListProps {
+    list: Array<IVideo>;
 }
 
-function DateTime(props) {
+function DateTime({ date }: { date: string }) {
     return (
-        <p className="date">{props.date}</p>
+        <p className="date">{date}</p>
     )
 }
 
-function Video({url, date} : IVideo) {
+const withPrettyDate = (WrappedComponent : any) => {
+    return (props : any) => {
+        return (
+            <WrappedComponent
+                {...props}
+                date={moment(props.date).fromNow()}
+            >
+            </WrappedComponent>
+        )
+    }
+}
+
+function Video({ url, date }: IVideo) {
+    const DateTimePrettied = withPrettyDate(DateTime);
     return (
         <div className="video">
             <iframe src={url} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen></iframe>
-            <DateTime date={date} />
+            <DateTimePrettied date={date} />
         </div>
     )
 }
 
-function VideoList({list} : IVideoListProps) {
+function VideoList({ list }: IVideoListProps) {
     return list.map(item => <Video url={item.url} date={item.date} />);
 }
 
 export default function App() {
-    const [list, setList] = useState([
+    moment.locale('ru');
+    const [list, setList] = useState<IVideo[]>([
         {
             url: 'https://www.youtube.com/embed/rN6nlNC9WQA?rel=0&amp;controls=0&amp;showinfo=0',
             date: '2017-07-31 13:24:00'
@@ -52,7 +68,7 @@ export default function App() {
         },
         {
             url: 'https://www.youtube.com/embed/TxbE79-1OSI?rel=0&amp;controls=0&amp;showinfo=0',
-            date: '2017-12-02 05:24:00'
+            date: '2023-11-02 05:24:00'
         },
     ]);
 
